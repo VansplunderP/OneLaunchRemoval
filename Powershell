@@ -1,0 +1,35 @@
+$uninstallerPath = "$env:LOCALAPPDATA\OneLaunch\unins000.exe"
+
+# Kill OneLaunch process
+$oneLaunchProcess = Get-Process -Name "OneLaunch" -ErrorAction SilentlyContinue
+if ($oneLaunchProcess) {
+    $oneLaunchProcess | ForEach-Object { $_.Kill() }
+    Write-Host "OneLaunch process has been terminated."
+}
+
+# Kill Chromium process
+$chromiumProcess = Get-Process -Name "Chromium" -ErrorAction SilentlyContinue
+if ($chromiumProcess) {
+    $chromiumProcess | ForEach-Object { $_.Kill() }
+    Write-Host "Chromium process has been terminated."
+}
+
+if (Test-Path $uninstallerPath) {
+    $arguments = "/SILENT"
+    Start-Process -FilePath $uninstallerPath -ArgumentList $arguments -Wait
+    Write-Host "OneLaunch has been uninstalled successfully."
+
+    # Clean up associated files
+    $oneLaunchDir = Split-Path $uninstallerPath
+    Remove-Item -Path $oneLaunchDir -Recurse -Force
+    Write-Host "Associated files have been removed."
+
+    # Clean up registry entries
+    $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\OneLaunch_is1"
+    if (Test-Path $regPath) {
+        Remove-Item -Path $regPath -Force
+        Write-Host "Registry entries have been removed."
+    }
+} else {
+    Write-Host "OneLaunch is not installed on this system."
+}
