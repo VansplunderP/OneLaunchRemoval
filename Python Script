@@ -1,0 +1,22 @@
+import os
+
+def uninstall_onelaunch():
+    # Get the user's home directory
+    home_dir = os.path.expanduser("~")
+    
+    # Construct the path to the OneLaunch uninstaller
+    uninstaller_path = os.path.join(home_dir, "AppData", "Local", "OneLaunch", "unins000.exe")
+    
+    # Check if the uninstaller file exists
+    if os.path.exists(uninstaller_path):
+        # Construct the command to run the uninstaller silently
+        command = f"runas /user:{os.getlogin()} \"{uninstaller_path}\" /SILENT"
+        
+        # Execute the command
+        os.system(command)
+        print("OneLaunch has been uninstalled successfully.")
+    else:
+        print("OneLaunch is not installed on this system.")
+
+# Call the function to uninstall OneLaunch
+uninstall_onelaunch()
